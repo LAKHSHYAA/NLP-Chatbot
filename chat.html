@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Chatbot</title>
+</head>
+<body>
+    <div id="chat-container"></div>
+    <input type="text" id="user-input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+    <script>
+        function sendMessage() {
+            var message = document.getElementById("user-input").value;
+            document.getElementById("user-input").value = "";
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "http://localhost:5000/chatbot", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displayMessage(message, "user");
+                    displayMessage(response.response, "bot");
+                }
+            };
+            xhr.send(JSON.stringify({ "message": message }));
+        }
+
+        function displayMessage(message, sender) {
+            var chatContainer = document.getElementById("chat-container");
+            var messageElement = document.createElement("div");
+            messageElement.classList.add(sender);
+            messageElement.innerHTML = message;
+            chatContainer.appendChild(messageElement);
+        }
+    </script>
+</body>
+</html>
